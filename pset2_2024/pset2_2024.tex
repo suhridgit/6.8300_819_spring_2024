@@ -1,0 +1,129 @@
+\documentclass[11pt]{article}
+
+\usepackage[left=3cm,top=2cm,bottom=2cm,right=3cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+\usepackage{array}
+\usepackage{graphicx}
+\usepackage{subfigure}
+\usepackage{epsf}
+\usepackage{psfrag}
+\usepackage{epsfig}
+\usepackage{textcomp}
+\usepackage{hyperref}
+\usepackage[dvipsnames]{xcolor}
+\newcommand{\comment}[1]{{}}
+
+\newcommand{\hwproblem}[2] {\noindent \\ {\bf #1} {\it #2}}
+
+\newcommand{\textbox}[1]{\hfill\rule{0ex}{0.01ex}
+ \centerline{\fbox{\parbox{\textwidth}{#1}}}}
+
+
+\pagestyle{plain} % Header is clear and the footer contains the page number
+\setlength{\parindent}{0pt}
+\addtolength{\parskip}{\baselineskip}
+
+
+\begin{document}
+
+% Header
+\begin{center}
+\small{MIT CSAIL} \\
+\vspace{0.1cm}
+\large{6.8300/1 Advances in Computer Vision} \\
+\vspace{0.2cm}
+Spring 2024\\
+\vspace{1cm}
+{\bf Problem Set 2}
+\vspace{0.2cm}
+\end{center}
+
+% Administration
+\textbox{
+\textbf{Posted:} Thursday, February 22, 2024  \hfill  \textbf{Due:} Thursday 23:59, February 29, 2024\\
+
+The relevant material for this Problem Set was covered in Lectures 3, 4,  and 5.\\
+
+\textbf{6.8300} students are expected to finish \textbf{all} problems. \\
+\textbf{6.8301} students are expected to finish all problems, \textbf{except} Problem 4. Please note that 6.8301 students will \textit{not} receive credit for Problem 4. \\
+
+We provide a Python notebook with the code to be completed. You can run it locally or on Google Colab. To use Colab, upload it to Google Drive and double-click the notebook (or right-click and select Open with Google Colaboratory), which will allow you to complete the problems without setting up your own environment. Once you have finished, make sure all the cells are run before downloading the notebook, and also copy the code sections that you have completed as screenshots into the report (or directly copy the code into the report in a legible manner).\\
+
+\textbf{Submission Instructions:} Please submit three categories of files on Gradescope: Submit (1) your report named \texttt{kerberos.pdf} which should include your answers to all required questions with images/plots showing your results as well as the code you wrote (e.g., using screenshots), (2) the provided Python notebook with the relevant source code and with all the cells run, and (3) \textcolor{red}{videos} showing your results (see the individual problems for more information regarding videos). This week, there will be one assignment portal for all files, available by Tuesday.\\
+
+\textbf{Attention:} \textcolor{red}{\textbf{If you fail to include your code in your report or the videos in your submission, we will not be able to give you credit for your code or videos, so please do not forget.}}\\
+
+\textbf{Late Submission Policy:} If your Problem Set is submitted within 7 days of the original deadline, you will receive partial credit. Such submissions will be penalized by a multiplicative coefficient that linearly decreases from 1 to 0.5, step-wise on each day's 11:59pm cutoff.}
+
+\vspace{0.2cm}
+
+\newpage 
+
+% \hwproblem{Problem 0}{ \textcolor{red}{Required} (0 points) }
+
+
+% Please state which version of the course you are registered in (6.8300 or 6.8301). 
+% If you are a listener, please do not submit an assignment as we will not grade it.
+
+\hwproblem{Problem 1}{Hybrid images (20 points) }
+
+In this problem you will create hybrid images as described in
+\cite{oliva2006hybrid}. You may find the functions in \texttt{numpy.fft.*} or \texttt{scipy.signal.convolve2d} useful.
+
+Take two images, A and B, that you'll want to have blend from one to the other. You can use any two images you like. Try to make the objects in the two images occupy more or less the same region. Construct a hybrid image from A (to be seen
+close-up) and B (to be seen far away) as follows:
+\begin{center}
+out =  \texttt{blur}(B) + (A-\texttt{blur}(A))
+\end{center}
+
+Where \texttt{blur} is a function that low-pass filters the image. You can use a Gaussian filter or try other blur filters, such as the box filter. You only have to try one filter. Although not required, if you use the Gaussian filter, try setting sigma to different values and see how the amount of blurring affects your perception of the results. In your report, please specify the type of filter you used and its parameters (e.g., the value of sigma for the Gaussian filter) and show your input images labelled clearly as A and B, and \textbf{include the result at both the original size and a downsampled size}. Remember, always blur before downsampling to avoid aliasing, and be aware of uint8 overflow errors. As a sanity check, you should be able to see the illusion as described in the paper.
+
+\hwproblem{Problem 2}{De-hybridizing (30 points)}
+
+Examine the image \texttt{einsteinandwho.jpg} included in the notebook. Using the method of your choice, remove the individual represented in the low spatial frequency range to create two images: one of Einstein, and one of the other person. Please intensity scale the images using the provided function \texttt{intensityscale(...)} to make them easier to see. Include both images in the report. Note that your image of Einstein with the other person removed may not be as good as the original image; still include it in the report. For fun: can you guess who is in the low spatial frequency image?
+
+
+\hwproblem{Problem 3}{Motion Magnification} (50 points)
+
+In this problem we will investigate motion magnification in videos. Recall that position shifts in image space correspond to phase shifts in the frequency domain of the Fourier transform. This means that for two images, we can compare the Fourier transform of the two images to find the phase shift between the images. Amplifying the phase shift by a fixed factor in the Fourier transform frequency domain will amplify the position shift by the same factor in the image domain after we perform the inverse Fourier transform. We will use this idea to exaggerate the motions in videos.
+
+(a) (10 points) For a purely horizontal offset of an impulse signal, magnifying the phase shift will result in a magnified horizontal offset after the inverse transform. Please fill in lines 6 and 9 in \texttt{Magnify Change}. You should find the phase shift between the two input images and magnify it by the specified \texttt{magnificationFactor}. When complete, the function \texttt{magnifyChange} should return an image showing what image 2 would look like with the magnified offset. Please run \texttt{Problem 3.a} and submit the generated plot in the report.
+
+(b) (10 points) If there is motion in more than one direction between two images, we will see that naively magnifying the phase shift of the whole images will not work. In \texttt{Problem 3.b}, we have set up a vertical offset of an impulse signal as well as the horizontal one from part a. 
+
+(i) Fill in the code to change the \texttt{expected} matrix to show what the expected output should be. Please run \texttt{Problem 3.b} and attach the generated plot in the report.
+
+(ii) Based on the output and your expected output, what are the key differences? Please explain the cause for the impulse signal in the bottom left of the magnified output.
+
+(c) (10 points) One strategy we can use if there are multiple motions between two images is to do a localized Fourier transform by independently magnifying the offsets on small windows of the images and aggregating the results across the windows. When we restrict our window of consideration, it is more likely for everything in the window to be moving the same way. We will use Gaussian filters to mask small windows of the image and perform magnification on each window independently. In \texttt{Problem 3.c}, please fill in the Gaussian filter in line 27 and the appropriately windowed input images in line 28. Since we are working with images, we will use the discrete Gaussian filter rather than the continuous one. Run \texttt{Problem 3.c} to confirm that the two motions were properly magnified and submit the generated plot in your report.
+
+(d)  (20 points) We are now ready to apply motion magnification to videos. We will use the same approach as in part c of magnifying Gaussian windowed regions of the video frames. Rather than directly finding the phase shifts between consecutive video frames, we will keep a moving average of the Fourier transform phases and compare each new frame's DFT phase with the current moving average of phase. The moving average is an IIR low-pass filter, averaging 0.5 times the previous average with 0.5 times the current phase. For simplicity, each of the RGB channels are processed independently and identically. In \texttt{Problem 3.d}, you will need to fill in the Gaussian filter in line 28, the DFT phase of the magnified window in line 44, and the DFT of the magnified window in line 47. Please run \texttt{Problem 3.d} and submit the generated video. Note that the code may take some time to run - you can temporarily modify \texttt{sigma} to decrease the number of windowed regions to process. 
+
+As a deliverable, please include \texttt{bill\_magnified.avi} generated using \texttt{sigma} as 13 and \\ 
+\texttt{magnification factor} as 10. 
+
+\hwproblem{Problem 4 [6.8300 Only]}{Eulerian Motion Magnification} (40 points)
+
+We will implement the predecessor of the phase based motion magnification, Eulerian motion magnification \cite{Wu12Eulerian}. This method applies spatial decomposition and temporal filtering to magnify the subtle signals in the input video. The paper showed color magnification which could reveal color change due to the flow of blood as it fills the face, and also subtle motions like pulse on the wrist and moving abdomen of a baby as it breathes. 
+
+(a) (10 points) Fill in the function \texttt{create\_gaussian\_pyramid}, which takes in the video frames and outputs the Gaussian pyramid consisting of 4 levels. Please include the plot in your report.
+
+(b) (10 points) Fill in the function \texttt{create\_laplacian\_pyramid} which takes in the gaussian pyramid of the videos and outputs a list containing the different levels of the laplcian pyramid. Note that you will have only 3 levels for the laplacian pyramid. Please include the plot in your report.
+
+(c) (10 points) Now we will perform the temporal filtering of the laplacian pyramids of the video. We will first create a Butterworth bandpass filter \footnote{\url{https://www.geeksforgeeks.org/digital-low-pass-butterworth-filter-in-python/}} to convert a user-specified frequency band to a second-order IIR structure\footnote{IIR. \url{https://en.wikipedia.org/wiki/Infinite\_impulse_response}}. First, complete the TODOs in the \\
+\texttt{butter\_bandpass\_filter} function using the \texttt{signal.butter} and \texttt{signal.lfilter} functions. This filter is then applied to each of the levels of the Laplacian pyramid and the filtered signal is amplified using the \texttt{amplification} factor set  to 20. Please use the low and high frequencies as 0.4 and 3.
+
+(d) (10 points) To compute the final amplified signal, loop over all the amplified filtered signals and add the sum of all to the original video. Please submit the generated video named \\
+\texttt{baby\_euler\_magnification.avi}.  
+
+Note that the output video will likely flicker and show severe magnification artifacts for about 4 seconds before showing a noisy magnified video. The initial artifacts should be ignored.
+
+\hwproblem{Problem 5}{Remember to include notebook.} (1 point)
+
+\bibliographystyle{plain}
+\bibliography{pset2}
+
+\end{document}

@@ -1,0 +1,142 @@
+\documentclass[11pt]{article}
+
+\usepackage[left=3cm,top=2cm,bottom=2cm,right=3cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{enumerate}
+\usepackage{textcomp}
+\usepackage[dvipsnames]{xcolor}
+%\usepackage{natbib}
+
+
+\newcommand{\comment}[1]{{}}
+
+\newcommand{\hwproblem}[2] {\noindent \\ {\bf #1} {\it #2}}
+
+\newcommand{\textbox}[1]{\hfill\rule{0ex}{0.01ex}
+ \centerline{\fbox{\parbox{\textwidth}{#1}}}}
+
+\pagestyle{plain} % Header is clear and the footer contains the page number
+\setlength{\parindent}{0pt}
+\addtolength{\parskip}{\baselineskip}
+
+
+
+\begin{document}
+
+% Header
+\begin{center}
+\small{MIT CSAIL} \\
+\vspace{0.1cm}
+\large{6.8300/1 Advances in Computer Vision} \\
+\vspace{0.2cm}
+Spring 2024\\
+\vspace{1cm}
+{\bf Problem Set 3}
+\vspace{0.2cm}
+\end{center}
+
+
+% Administration
+\textbox{
+\textbf{Posted:} Thursday, Feb 29, 2024   \hfill  \textbf{Due:} Tuesday 23:59, March 12, 2024\\
+
+
+We provide a Python notebook with the code to be completed. You can run it locally or on Google Colab. To use Colab, upload it to Google Drive and double-click the notebook (or right-click and select Open with Google Colaboratory), which will allow you to complete the problems without setting up your own environment. Once you have finished, make sure all the cells are run before downloading the notebook, and also copy the code sections that you have completed into your report (e.g., as screenshots or in some other legible manner).\\
+
+\textbf{Submission Instructions:}
+Please submit two files on Gradescope. (1) your pdf report and (2) your Python notebook with all cells run. Different submission portals this time.\\
+
+
+\\
+
+\textbf{Attention:} \textcolor{red}{\textbf{We can't give credit when code is missing from \texttt{kerb.pdf}.}} Maybe set a reminder for yourself to check that you have answered all parts of all questions, with all code included.\\
+
+\textbf{Late Submission Policy:} If your Problem Set is submitted within 7 days (rounding up) of the original deadline, you will receive partial credit. Such submissions will be penalized by a multiplicative coefficient that linearly decreases from 1 to 0.5, stepwise by day.}\\
+\vspace{0.2cm}
+
+\textbf{Problems 1, 2, and 4 assume no knowledge of backpropagation. Problem 3 is about backpropagation, which will be covered in class after this assignment is released.}
+
+In problems 2 and 4, you will be experimenting with neural networks using PyTorch. To speed up the execution of the experiments, we recommend using GPU acceleration. Colab comes with free GPU support. On Colab, select GPU as your runtime type as follows:\\
+\textbf{Runtime $\rightarrow$ Change runtime type $\rightarrow$ Hardware accelerator $\rightarrow$ GPU $\rightarrow$ Save}.
+
+Credit: Parts of this Problem Set are inspired by \cite{santurkar2019image}, \cite{engstrom2019adversarial}, and \cite{olah2017feature}.
+
+\newpage 
+
+\hwproblem{Problem 1}{Forward Propagation} (6.8301: 10 points, 6.8300: 20 points)
+\vspace{-0.5em}
+\begin{enumerate}[(a)]
+  \item (Convolutional layer) The convolutional layer is the most popular module in computer vision tasks. Assume your input $x_{in}$ and output $x_{out}$ are both 1D signals of size $N$, and your kernel $W$ has size $k$, where $k$ is an odd number. Assume the stride size is 1. Find the equation for the forward propagation. You can omit the bias term of the convolutional layer.
+
+  \item Imagine a convolutional filter which detects ``cat." In image A, there is one cat in the bottom left; in image B, many cats. Which model layer would distinguish between these images better, global max pooling or a global average pooling? Write ``global max pooling" or ``global average pooling."
+  
+  \item (Pooling layer) \textbf{[6.8300 Only]} The pooling layer is a popular layer without trainable parameters. In this question, consider a max pooling operator. Assume your input $x_{in}$ and output $x_{out}$ are both 1D signals of size $N$ and your kernel has size $k$, where $k$ is an odd number. Assume the stride size is 1. Find the equation for the forward propagation.
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\hwproblem{Problem 2}{Neural Network Inference} (10 points)
+
+\vspace{-0.2em}
+
+In this section, we will ask a neural network to classify an image into one of the 1000 object classes from the ImageNet dataset.
+
+\vspace{-0.5em}
+\begin{enumerate}[(a)]
+
+\item In the provided Python notebook, load the randomly initialized network and answer the following question: How many features are in the input of the last layer?
+\item Run the Corgi image through the network. Include the generated plot in your report and answer the following question: What are the top-5 predictions?
+\item Reload the network with pre-trained weights. These weights originate from a network trained on the ImageNet dataset. Run the Corgi image through the network. Then complete \texttt{TODO1} and rerun the network. Include the two generated plots in your report (one displays the top-5 predicted logits, the other displays the top-5 predicted probabilities), and answer the following question: What are the top-5 predictions now? Please also include the code you completed in your report (i.e., the code for function \texttt{output2prob}).
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\hwproblem{Problem 3}{Backpropagation} (6.8301: 30 points, 6.8300: 40 points)
+\vspace{-0.5em}
+\begin{enumerate}[(a)]
+  \item (Convolutional layer) As in Problem 1a, assume your input $x_{in}$ and output $x_{out}$ are both 1D signals of size $N$, and your kernel $W$ has size $k$, where $k$ is an odd number. Assume the stride size is 1. Find the equation for the backward propagation. You can omit the bias term of the convolutional layer.
+
+  \item (Convolutional layer) Consider the backpropagation process with learning rate $\eta$. Assume you are given the gradients from the last layer $\frac{\partial C}{\partial x_{out}}$. Find the gradients of the input $\frac{\partial C}{\partial x_{in}}$ (your answer should be of the form $\frac{\partial C}{\partial x_{out}} * ...$), and find the update rule for the kernel weights $W^{i+1}$.
+  
+  \item (Convolutional layer) Discuss how you handle the boundaries (i.e., the padding) and explain your choice. Note your choice must justify both $x_{in}$ and $x_{out}$ having the same size.
+  
+  \item (Pooling layer) \textbf{[6.8300 only]} Now consider the max pooling operator. As in Problem 1b, assume your input $x_{in}$ and output $x_{out}$ are both 1D signals of size $N$ and your kernel has size $k$, where $k$ is an odd number. Assume the stride size is 1. Find the equation for the backward propagation.
+   
+  \item (Pooling layer) \textbf{[6.8300 only]}  Discuss how you handle the boundaries (i.e., the padding) and explain your choice. Note your choice must justify both $x_{in}$ and $x_{out}$ having the same size.
+  
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\hwproblem{Problem 4}{DeepDream and Adversarial Attacks} (6.8301: 30 points, 6.8300: 40 points)
+
+When  training  neural  networks,  we  optimize  the  model  parameters  to  maximize  a  certain objective.  In some cases, we may be interested in optimizing the input of the network for a fixed set of parameters.  In this section we will study how this technique can be used to generate images that can help us interpret the network, or fool it by making imperceptible changes to the input.
+
+Neural networks are generally differentiable with respect to their input.  Therefore,  we can compute the gradient of the objective with respect to the loss and use it to update the input through gradient descent.
+
+We will start by using this technique to obtain the input that maximizes the activations of the pre-trained neural network.
+
+\begin{enumerate}[(a)]
+\item\label{Tarantula} In this part, you will modify the input image to maximize the log-probability of the class Tarantula (id 76) by computing the gradient of the log-probability of Tarantula with respect to the input image.  Complete \texttt{TODO2} in the provided Python notebook. In your report, include the original image, attacked image, and the plot displaying the top-5 predicted probabilities. Please also include your code in your report.
+
+\item\label{Tigercat} Now maximize the log-probability of the class Tiger Cat (id 282) instead. In your report, include the original image, attacked image, and the plot displaying the top-5 predicted probabilities.
+
+\item Can you tell a visual difference between the attacked images and the original image? Briefly discuss why such attacks could cause security problems.
+
+\item \textbf{[6.8300 only]} In (a) and (b), adversarial examples are generated by maximizing the log-probability of different classes. Let's try a different objective here. Typically, we refer to the output from an intermediate layer as an ``embedding'' or ``feature map" of the network. Each layer of the network generates a different embedding of the input image. Instead of maximizing one single probability, instead modify a random image to minimize the $\ell$2-distance between its feature maps and the feature maps of the Corgi image. Try this with three different layers. To do all this, complete \texttt{TODO3} and \texttt{TODO4} in the notebook. Include the original and modified images for the three layers in your report (in total there should be six images), include the code for \texttt{TODO4} in your report, and answer the following question: Do the resulting images look similar to the Corgi image? 
+
+\item To avoid the adversarial examples, we need networks that are trained robustly to this kind of noise.  
+% Madry’s group\footnote{\url{https://people.csail.mit.edu/madry/}} at MIT has been working on robust neural networks and studying their properties. 
+In this problem, we will load the robustly trained network and repeat the previous experiment in question (\ref{Tigercat}).  Run the relevant code in the notebook (you don't have to write code for this problem). In your report, include the original image, attacked image, and the plot displaying the top-5 predicted probabilities for the class Tiger Cat (id 282) and two additional classes of your choice (by changing the class id in the code), and answer the following question: Do the attacked images now look noticeably different from the original image?
+
+
+\item \textbf{[6.8300 only]} Repeat problem 4d with the robust neural network by completing \texttt{TODO5} and \texttt{TODO6} in the notebook and running the relevant code for three different layers. Include the original and modified images for the three layers in your report (in total there should be six images), include the code for \texttt{TODO6} in your report, and answer the following question: Do the resulting images now look more similar to the Corgi image? 
+
+\end{enumerate}
+
+\bibliographystyle{ieeetr}
+
+\bibliography{pset3}
+\end{document}
