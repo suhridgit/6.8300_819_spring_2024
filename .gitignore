@@ -27,4 +27,4 @@ var/
 data/
 ./data/
 # Ignore macOS files
-.DS_Store
+.DS_Storepset3_2024/imagenet_l2_3_0.pt
