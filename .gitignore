@@ -26,6 +26,7 @@ var/
 
 data/
 ./data/
-# Ignore macOS files
+# Ignore macOS files and models
 .DS_Store
 pset3_2024/imagenet_l2_3_0.pt
+**/*.tar
